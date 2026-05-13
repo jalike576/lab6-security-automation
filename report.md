@@ -1,16 +1,16 @@
-# Bao cao Lab 6: Security Automation va CI/CD
+# Báo cáo Lab 6: Security Automation và CI/CD
 
-## Thong tin ca nhan
+## Thông tin cá nhân
 
-- Ho ten: TODO dien thong tin sinh vien
-- MSSV: TODO dien MSSV
-- Mon hoc: NT547 - Blockchain Nen tang, ung dung va bao mat
-- Ngay thuc hien: 2026-05-13
+- Họ tên: TODO điền thông tin sinh viên
+- MSSV: TODO điền MSSV
+- Môn học: NT547 - Blockchain Nền tảng, ứng dụng và bảo mật
+- Ngày thực hiện: 2026-05-13
 - GitHub repo: https://github.com/jalike576/lab6-security-automation
 
-## Moi truong
+## Môi trường
 
-Do may bi chan cai package Python truc tiep bang `pip --user`, Slither duoc cai trong virtualenv cuc bo:
+Do máy bị chặn cài package Python trực tiếp bằng `pip --user`, Slither được cài trong virtualenv cục bộ:
 
 ```bash
 python3 -m venv .venv
@@ -20,37 +20,37 @@ python3 -m venv .venv
 .venv/bin/solc-select use 0.8.24
 ```
 
-Khi chay lai cac lenh ben duoi, dung:
+Khi chạy lại các lệnh bên dưới, dùng:
 
 ```bash
 PATH="$PWD/.venv/bin:$PATH"
 ```
 
-## Yeu cau 1: Quet loi BadVault.sol
+## Yêu cầu 1: Quét lỗi BadVault.sol
 
-File da tao: `BadVault.sol`.
+File đã tạo: `BadVault.sol`.
 
-Lenh quet khong ap dung config loc nhieu:
+Lệnh quét không áp dụng config lọc nhiễu:
 
 ```bash
 printf '{}' >/tmp/slither-empty.json
 PATH="$PWD/.venv/bin:$PATH" slither BadVault.sol --config-file /tmp/slither-empty.json
 ```
 
-<!-- TODO screenshot: chup Terminal sau khi chay lenh tren, can thay danh sach detector va dong tong ket "6 result(s) found". -->
+<!-- TODO screenshot: chụp Terminal sau khi chạy lệnh trên, cần thấy danh sách detector và dòng tổng kết "6 result(s) found". -->
 
-Ket qua Slither tim thay 6 finding. Cac loai loi tieu bieu:
+Kết quả Slither tìm thấy 6 finding. Các loại lỗi tiêu biểu:
 
-- `reentrancy-eth`: `withdraw()` goi `msg.sender.call{value: amount}("")` truoc khi cap nhat `balances[msg.sender] = 0`, vi pham Checks-Effects-Interactions.
-- `suicidal`: `suicide()` cho phep bat ky ai goi `selfdestruct(payable(owner))`.
-- `solc-version`: dung pragma `^0.8.0`, pham vi compiler co nhung version da biet co issue.
-- `low-level-calls`: dung low-level call trong `withdraw()`.
-- `immutable-states`: `owner` co the khai bao `immutable`.
-- `shadowing-builtin`: ham `suicide()` trung ten builtin/deprecated symbol.
+- `reentrancy-eth`: `withdraw()` gọi `msg.sender.call{value: amount}("")` trước khi cập nhật `balances[msg.sender] = 0`, vi phạm Checks-Effects-Interactions.
+- `suicidal`: `suicide()` cho phép bất kỳ ai gọi `selfdestruct(payable(owner))`.
+- `solc-version`: dùng pragma `^0.8.0`, phạm vi compiler có những version đã biết có issue.
+- `low-level-calls`: dùng low-level call trong `withdraw()`.
+- `immutable-states`: `owner` có thể khai báo `immutable`.
+- `shadowing-builtin`: hàm `suicide()` trùng tên builtin/deprecated symbol.
 
-## Yeu cau 2: Fix loi va quet lai GoodVault.sol
+## Yêu cầu 2: Fix lỗi và quét lại GoodVault.sol
 
-File da tao: `GoodVault.sol`.
+File đã tạo: `GoodVault.sol`.
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -98,20 +98,20 @@ contract GoodVault {
 }
 ```
 
-Lenh quet:
+Lệnh quét:
 
 ```bash
 printf '{}' >/tmp/slither-empty.json
 PATH="$PWD/.venv/bin:$PATH" slither GoodVault.sol --config-file /tmp/slither-empty.json
 ```
 
-<!-- TODO screenshot: chup Terminal sau khi chay lenh tren, can thay Slither chi con finding `low-level-calls` va khong con High/Medium. -->
+<!-- TODO screenshot: chụp Terminal sau khi chạy lệnh trên, cần thấy Slither chỉ còn finding `low-level-calls` và không còn High/Medium. -->
 
-Ket qua: cac loi High/Medium da duoc khac phuc. Slither chi con `low-level-calls` do contract van dung `call` de gui ETH; finding nay chap nhan duoc trong bai vi code da dung CEI, check return value va co `nonReentrant`.
+Kết quả: các lỗi High/Medium đã được khắc phục. Slither chỉ còn `low-level-calls` do contract vẫn dùng `call` để gửi ETH; finding này chấp nhận được trong bài vì code đã dùng CEI, check return value và có `nonReentrant`.
 
-## Yeu cau 3: Slither config file
+## Yêu cầu 3: Slither config file
 
-File da tao: `slither.config.json`.
+File đã tạo: `slither.config.json`.
 
 ```json
 {
@@ -121,29 +121,29 @@ File da tao: `slither.config.json`.
 }
 ```
 
-Lenh chay BadVault voi config:
+Lệnh chạy BadVault với config:
 
 ```bash
 PATH="$PWD/.venv/bin:$PATH" slither BadVault.sol --config-file slither.config.json
 ```
 
-<!-- TODO screenshot: chup Terminal sau khi chay lenh tren, can thay Slither con 3 result(s) found, it hon ket qua Yeu cau 1 la 6 result(s) found. -->
+<!-- TODO screenshot: chụp Terminal sau khi chạy lệnh trên, cần thấy Slither còn 3 result(s) found, ít hơn kết quả Yêu cầu 1 là 6 result(s) found. -->
 
-Ket qua sau khi loc: con `reentrancy-eth`, `suicidal`, `immutable-states`. Detector `solc-version` va cac finding Low/Informational da duoc loc bo.
+Kết quả sau khi lọc: còn `reentrancy-eth`, `suicidal`, `immutable-states`. Detector `solc-version` và các finding Low/Informational đã được lọc bỏ.
 
-## Yeu cau 4: Printers va truc quan hoa
+## Yêu cầu 4: Printers và trực quan hóa
 
-File mau da tao: `MyNFT.sol`, gom `Ownable`, `ERC165`, `SimpleERC721`, va `MyNFT` de co cay ke thua ro rang.
+File mẫu đã tạo: `MyNFT.sol`, gồm `Ownable`, `ERC165`, `SimpleERC721`, và `MyNFT` để có cây kế thừa rõ ràng.
 
-Lenh human-summary:
+Lệnh human-summary:
 
 ```bash
 PATH="$PWD/.venv/bin:$PATH" slither MyNFT.sol --print human-summary
 ```
 
-<!-- TODO screenshot: chup Terminal sau khi chay lenh tren, can thay bang summary co contract `MyNFT`, 8 functions, ERC165, va 0 high/medium issue. -->
+<!-- TODO screenshot: chụp Terminal sau khi chạy lệnh trên, cần thấy bảng summary có contract `MyNFT`, 8 functions, ERC165, và 0 high/medium issue. -->
 
-Tom tat ket qua human-summary:
+Tóm tắt kết quả human-summary:
 
 ```text
 Total number of contracts in source files: 4
@@ -153,26 +153,26 @@ Number of medium issues: 0
 MyNFT: 8 functions, ERC165, Complex code: No
 ```
 
-Lenh tao inheritance graph:
+Lệnh tạo inheritance graph:
 
 ```bash
 PATH="$PWD/.venv/bin:$PATH" slither MyNFT.sol --print inheritance-graph
 dot -Tpng MyNFT.sol.inheritance-graph.dot -o MyNFT.inheritance-graph.png
 ```
 
-<!-- TODO screenshot: mo file `MyNFT.inheritance-graph.png` va chup hinh cay ke thua. Co the dung anh da tao trong thu muc nay hoac upload file `.dot` len GraphvizOnline. -->
+<!-- TODO screenshot: mở file `MyNFT.inheritance-graph.png` và chụp hình cây kế thừa. Có thể dùng ảnh đã tạo trong thư mục này hoặc upload file `.dot` lên GraphvizOnline. -->
 
-Hinh cay ke thua da tao:
+Hình cây kế thừa đã tạo:
 
 ![Inheritance graph](MyNFT.inheritance-graph.png)
 
-Y nghia khi audit du an lon: cay ke thua cho auditor thay nhanh contract nao ke thua logic nao, modifier nao co the anh huong den ham public, va thu tu override/multiple inheritance. Dieu nay giup phat hien rui ro bi che khuat trong base contract, logic phan quyen nam o contract cha, hoac xung dot override ma neu chi doc tung file rieng le se de bo sot.
+Ý nghĩa khi audit dự án lớn: cây kế thừa cho auditor thấy nhanh contract nào kế thừa logic nào, modifier nào có thể ảnh hưởng đến hàm public, và thứ tự override/multiple inheritance. Điều này giúp phát hiện rủi ro bị che khuất trong base contract, logic phân quyền nằm ở contract cha, hoặc xung đột override mà nếu chỉ đọc từng file riêng lẻ sẽ dễ bỏ sót.
 
-## Yeu cau 5: GitHub Actions CI/CD
+## Yêu cầu 5: GitHub Actions CI/CD
 
 Repo GitHub: https://github.com/jalike576/lab6-security-automation
 
-File workflow da tao: `.github/workflows/slither.yml`.
+File workflow đã tạo: `.github/workflows/slither.yml`.
 
 ```yaml
 name: Slither
@@ -197,20 +197,20 @@ jobs:
           fail-on: high
 ```
 
-Workflow duoc cau hinh chay khi `push` vao nhanh `main`. Vi `BadVault.sol` co finding High (`reentrancy-eth`, `suicidal`), job se fail khi gap High Severity theo `fail-on: high`.
+Workflow được cấu hình chạy khi `push` vào nhánh `main`. Vì `BadVault.sol` có finding High (`reentrancy-eth`, `suicidal`), job sẽ fail khi gặp High Severity theo `fail-on: high`.
 
-<!-- TODO screenshot: sau khi push len GitHub, vao repo -> tab Actions -> workflow `Slither`, chup man hinh run moi nhat. Can chup trang the hien job Slither fail do Slither tim thay loi High Severity trong `BadVault.sol`. -->
+<!-- TODO screenshot: sau khi push lên GitHub, vào repo -> tab Actions -> workflow `Slither`, chụp màn hình run mới nhất. Cần chụp trang thể hiện job Slither fail do Slither tìm thấy lỗi High Severity trong `BadVault.sol`. -->
 
-Co the kiem tra run bang GitHub CLI:
+Có thể kiểm tra run bằng GitHub CLI:
 
 ```bash
 gh run list --repo jalike576/lab6-security-automation --limit 5
 ```
 
-<!-- TODO screenshot tuy chon: chup Terminal lenh `gh run list --repo jalike576/lab6-security-automation --limit 5` de thay status workflow. -->
+<!-- TODO screenshot tùy chọn: chụp Terminal lệnh `gh run list --repo jalike576/lab6-security-automation --limit 5` để thấy status workflow. -->
 
-## Cau hoi tu duy
+## Câu hỏi tư duy
 
-Static Analysis nhu Slither nhanh hon vi no doc ma nguon/AST/CFG va ap dung tap rule co san ma khong can deploy contract, sinh input, hay chay nhieu trang thai runtime. No co the quet toan bo code trong vai giay va chi phi tinh toan thap.
+Static Analysis như Slither nhanh hơn vì nó đọc mã nguồn/AST/CFG và áp dụng tập rule có sẵn mà không cần deploy contract, sinh input, hay chạy nhiều trạng thái runtime. Nó có thể quét toàn bộ code trong vài giây và chi phí tính toán thấp.
 
-Nhung Static Analysis de co false positive hon Fuzzing hoac Formal Verification vi no khong biet day du ngu canh van hanh, invariant nghiep vu, gia tri runtime va rang buoc moi truong. Slither thuong bao theo pattern nguy hiem, vi vay mot pattern co the an toan trong ngu canh cu the van bi canh bao. Fuzzing kiem tra bang cach sinh input va thuc thi contract nen bang chung gan runtime hon, con Formal Verification chung minh theo dac ta nen chinh xac hon neu dac ta dung, nhung doi hoi thoi gian va cong suc lon hon.
+Nhưng Static Analysis dễ có false positive hơn Fuzzing hoặc Formal Verification vì nó không biết đầy đủ ngữ cảnh vận hành, invariant nghiệp vụ, giá trị runtime và ràng buộc môi trường. Slither thường báo theo pattern nguy hiểm, vì vậy một pattern có thể an toàn trong ngữ cảnh cụ thể vẫn bị cảnh báo. Fuzzing kiểm tra bằng cách sinh input và thực thi contract nên bằng chứng gần runtime hơn, còn Formal Verification chứng minh theo đặc tả nên chính xác hơn nếu đặc tả đúng, nhưng đòi hỏi thời gian và công sức lớn hơn.
