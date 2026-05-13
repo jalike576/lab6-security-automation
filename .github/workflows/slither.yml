@@ -1,0 +1,20 @@
+name: Slither
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  slither:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Slither
+        uses: crytic/slither-action@v0.4.1
+        with:
+          target: BadVault.sol
+          solc-version: 0.8.24
+          fail-on: high

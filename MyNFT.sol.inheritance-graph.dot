@@ -1,0 +1,13 @@
+digraph "" {
+c27_Ownable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Ownable</B></TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    onlyOwner()</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    owner</TD></TR></TABLE> >];
+
+c40_ERC165[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ERC165</B></TD></TR></TABLE> >];
+
+c130_SimpleERC721 -> c40_ERC165;
+c130_SimpleERC721[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>SimpleERC721</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    balanceOf(address)</TD></TR><TR><TD align="left">    ownerOf(uint256)</TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _mint(address,uint256)</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    owners</TD></TR><TR><TD align="left">    balances</TD></TR></TABLE> >];
+
+c168_MyNFT -> c130_SimpleERC721 [ label="1" ];
+c168_MyNFT -> c27_Ownable [ label="2" ];
+c168_MyNFT[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>MyNFT</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    mint(address)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    name</TD></TR><TR><TD align="left">    symbol</TD></TR><TR><TD align="left">    nextTokenId</TD></TR></TABLE> >];
+
+}
