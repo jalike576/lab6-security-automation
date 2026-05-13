@@ -166,7 +166,7 @@ Hinh cay ke thua da tao:
 
 ![Inheritance graph](MyNFT.inheritance-graph.png)
 
-Y nghia khi audit du an lon: cay ke thua cho auditor thay nhanh contract nao ke thua logic nao, modifier nao co the anh huong den ham public, va thu tu override/multiple inheritance. Dieu nay giup phat hien rui ro bi che khuattrong base contract, logic phan quyen nam o contract cha, hoac xung dot override ma neu chi doc tung file rieng le se de bo sot.
+Y nghia khi audit du an lon: cay ke thua cho auditor thay nhanh contract nao ke thua logic nao, modifier nao co the anh huong den ham public, va thu tu override/multiple inheritance. Dieu nay giup phat hien rui ro bi che khuat trong base contract, logic phan quyen nam o contract cha, hoac xung dot override ma neu chi doc tung file rieng le se de bo sot.
 
 ## Yeu cau 5: GitHub Actions CI/CD
 
